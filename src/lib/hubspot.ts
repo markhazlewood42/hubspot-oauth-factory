@@ -9,16 +9,11 @@ const hubspotClient = new Client();
 
 // Get OAuth URL
 // This returns the URL that users will visit to install your app
-export function getInstallUrl(appId: string, redirectUri: string) {
-  // Get registered scopes for the app
-  //const scopes =
-
-  // Define the scopes (permissions) your app needs as an array
-  const scopes = process.env.APP_SCOPES || "crm.objects.contacts.read";
+export function getInstallUrl(clientId: string, scopes: string, redirectUri: string) {
 
   // The correct parameter order is: clientId, redirectUri, scopes (as a space-separated string)
   return hubspotClient.oauth.getAuthorizationUrl(
-    process.env.HUBSPOT_CLIENT_ID,
+    clientId,
     redirectUri,
     scopes
   );

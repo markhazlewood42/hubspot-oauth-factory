@@ -55,7 +55,9 @@ export async function storeHubSpotApp(
   appId: number,
   clientId: string,
   clientSecret: string,
-  scopes: string
+  scopes: string,
+  installUrl: string | null,
+  redirectUrl: string | null
 ) {
   try {
     // Check if an installation already exists for this portal
@@ -73,7 +75,9 @@ export async function storeHubSpotApp(
         .update({
           client_id: clientId,
           client_secret: clientSecret,
-          configured_scopes: scopes
+          configured_scopes: scopes,
+          install_url: installUrl,
+          redirect_url: redirectUrl
         })
         .eq("app_id", appId)
         .select()
@@ -87,7 +91,9 @@ export async function storeHubSpotApp(
           app_id: appId,
           client_id: clientId,
           client_secret: clientSecret,
-          configured_scopes: scopes
+          configured_scopes: scopes,
+          install_url: installUrl,
+          redirect_url: redirectUrl
         })
         .select()
         .single();
