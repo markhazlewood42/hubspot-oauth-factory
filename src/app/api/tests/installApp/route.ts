@@ -17,9 +17,12 @@ export async function GET(request: Request) {
   if (appId) {
     try {
       // Get registered app data from db
-      const { success, appRecord } = await db.getRegisteredApp(Number.parseInt(appId));
+      const { success, appRecord, error } = await db.getRegisteredApp(Number.parseInt(appId));
       if (success && appRecord) {
         return NextResponse.json({success: true, message: `TESTING APP INSTALLATION. INSTALL URL: ${appRecord.install_url}`}, { status: 200 });
+      }
+      else if (error) {
+        return NextResponse.json({success: true, message: `ERROR GETTING APP INSTALLATION: ${error}`}, { status: 400 });
       }
     }
     catch (error) {
