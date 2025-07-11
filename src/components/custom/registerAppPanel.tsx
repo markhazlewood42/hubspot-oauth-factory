@@ -20,7 +20,6 @@ interface FormData {
     clientId: string;
     clientSecret: string;
     scopes: string;
-    installUrl: string;
     redirectUrl: string;
 }
 
@@ -38,7 +37,6 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
       clientId: '',
       clientSecret: '',
       scopes: '',
-      installUrl: '',
       redirectUrl: ''
   });
 
@@ -61,10 +59,8 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
 
   // Handle closing the registration panel
   const handleClose = () => {
-      //setIsSheetOpen(false);
       setSubmitError(null);
       setSubmitSuccess(false);
-
       onClose();
   };
 
@@ -78,7 +74,6 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
             clientId: '',
             clientSecret: '',
             scopes: '',
-            installUrl: '',
             redirectUrl: ''
         });
     };
@@ -89,31 +84,36 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
       setSubmitError(null);
 
       try {
-          // Convert appId to number for the storeHubSpotApp function
-          const appIdNumber = parseInt(formData.appId);
-          if (isNaN(appIdNumber)) {
-              throw new Error('App ID must be a valid number');
-          }
+        // Convert appId to number for the storeHubSpotApp function
+        const appIdNumber = parseInt(formData.appId);
+        if (isNaN(appIdNumber)) {
+            throw new Error('App ID must be a valid number');
+        }
 
-          // Call the storeHubSpotApp function
-          // Note: You'll need to create a server action or API route for this
-          console.log('Submitting form data:', {
-              appId: appIdNumber,
-              clientId: formData.clientId,
-              clientSecret: formData.clientSecret,
-              scopes: formData.scopes,
-              installUrl: formData.installUrl || null,
-              redirectUrl: formData.redirectUrl || null
-          });
+        // Call the storeHubSpotApp function
+        // Note: You'll need to create a server action or API route for this
+        console.log('Submitting form data:', formData);
 
-          // For now, just close the panel and show success
-          setSubmitSuccess(true);
-          setTimeout(() => {
-              handleClose();
-              // Reload apps data
-              window.location.reload();
-          }, 1000);
+        const response = await fetch('/api/registeredApps', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
 
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to register app');
+        }
+
+        // Close the panel and show success
+        setSubmitSuccess(true);
+        setTimeout(() => {
+            handleClose();
+            // Reload apps data
+            window.location.reload();
+        }, 1000);
       }
       catch (error) {
           setSubmitError(error instanceof Error ? error.message : 'Failed to register app');
@@ -164,7 +164,6 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
                   <Label htmlFor="clientSecret">Client Secret *</Label>
                   <Input
                       id="clientSecret"
-                      type="password"
                       placeholder="Enter your client secret"
                       value={formData.clientSecret}
                       onChange={(e) => handleInputChange('clientSecret', e.target.value)}
@@ -182,18 +181,6 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
                       onChange={(e) => handleInputChange('scopes', e.target.value)}
                       required
                       rows={3}
-                  />
-              </div>
-
-              {/* Install URL */}
-              <div className="space-y-2">
-                  <Label htmlFor="installUrl">Install URL</Label>
-                  <Input
-                      id="installUrl"
-                      type="url"
-                      placeholder="https://app.hubspot.com/oauth/authorize?..."
-                      value={formData.installUrl}
-                      onChange={(e) => handleInputChange('installUrl', e.target.value)}
                   />
               </div>
 

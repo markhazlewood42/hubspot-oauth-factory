@@ -1,6 +1,6 @@
 /**
  * Database utility functions for connecting to Supabase and managing app data.
- * Provides methods for storing and retrieving HubSpot app installations.
+ * Provides methods for storing and retrieving HubSpot apps and installations.
  */
 //import { create } from "domain";
 import { supabaseAdmin } from "./supabase";
@@ -103,7 +103,7 @@ export async function storeHubSpotApp(
       throw result.error;
     }
 
-    return { success: true, install: result.data };
+    return { success: true, appRecord: result.data };
   }
   catch (error) {
     console.error("Failed to store HubSpot app:", error);
