@@ -5,3 +5,5 @@
 - Provide a UI to register an app in the database
   - Need app ID, client ID, client secret, scopes
 - Once app is registered, provide user with redirect URL and install URL
+- Create an endpoint to expose the current OAuth access token for an app
+- Update README
