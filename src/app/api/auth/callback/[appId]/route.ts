@@ -8,9 +8,13 @@ import * as hubspot from "@/lib/hubspot";
 import * as db from "@/lib/db";
 
 // In Next.js App Router, API routes are defined by creating a route.ts file
-// This file handles GET requests to /api/auth/[appId]/callback endpoint.
+// This file handles GET requests to /api/auth/callback/[appId] endpoint.
 // The file path directly maps to the URL path
 export async function GET(request: Request) {
+
+  // TODO: Get app ID from path param and make sure it's been registered.
+  // This will be a unique oauth callback URLfor each registered app.
+
   // Extract query parameters from the request URL
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
