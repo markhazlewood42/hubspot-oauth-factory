@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 interface GetTokenParams {
   params: {
-    appID: string
+    appId: string
   }
 }
 
@@ -14,7 +14,7 @@ interface GetTokenParams {
 // The file path directly maps to the URL path
 export async function GET(request: Request, { params }: GetTokenParams) {
 
-  const appId = params.appID;
+  const appId = params.appId;
    if (!appId) {
     return NextResponse.json({ success: false, error: "No app ID provided" }, { status: 400 })
   }
