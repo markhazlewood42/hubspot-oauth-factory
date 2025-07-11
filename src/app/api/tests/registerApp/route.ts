@@ -10,8 +10,12 @@ import * as db from '@/lib/db';
 // The file path directly maps to the URL path
 export async function GET() {
 
-  db.storeHubSpotApp(1234, "TEST_CLIENT_ID", "TEST_CLIENT_SECRET");
-
-
-  return NextResponse.json({success: true, message: `PLACEHOLDER: TESTING APP REGISTRATION.`}, { status: 200 });
+  try {
+    const result = await db.storeHubSpotApp(1234, "TEST_CLIENT_ID", "TEST_CLIENT_SECRET");
+    return NextResponse.json({success: true, message: `TESTING APP REGISTRATION. RESULT: ${result}`}, { status: 200 });
+  }
+  catch (error) {
+    console.error("Error storing app info:", error);
+    return NextResponse.json({ success: false, error }, { status: 400});
+  }
 }
