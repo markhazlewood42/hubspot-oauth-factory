@@ -84,7 +84,7 @@ export async function storeHubSpotApp(
         .insert({
           app_id: appId,
           client_id: clientId,
-          clien_secret: clientSecret
+          client_secret: clientSecret
         })
         .select()
         .single();
