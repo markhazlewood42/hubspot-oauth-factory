@@ -1,0 +1,7 @@
+- Make this work with a single app OAuth install
+  - Deploy it to Vercel to verify, hardcode single app credentials as environment vars
+- Update database to create a table of apps, and map installs to apps
+- Update OAuth flow and all management / token access to key on app ID ==> Make all of this app ID agnostic
+- Provide a UI to register an app in the database
+  - Need app ID, client ID, client secret, scopes
+- Once app is registered, provide user with redirect URL and install URL
