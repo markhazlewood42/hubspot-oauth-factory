@@ -173,7 +173,43 @@ export async function storeHubSpotInstall(
   }
 }
 
-// Get a HubSpot installation by portal ID
+// Get a registered app by its ID
+export async function getRegisteredApp(appId: number):
+  Promise< {success: boolean, appRecord: AppDatabaseRecord | null, error: string} > {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from("hubspot_apps")
+        .select("*")
+        .eq("app_id", appId)
+        .single();
+
+        if (error) {
+          return { success: false, appRecord: null, error: error.message };
+        }
+
+        if (!data) {
+          return { success: false, appRecord: null, error: "Installation not found" };
+        }
+
+        const returnData: AppDatabaseRecord = {
+          id: data.id as number,
+          app_id: data.app_id as number,
+          client_id: data.client_id as string,
+          client_secret: data.client_secret as string,
+          configured_scopes: data.configured_scopes as string,
+          install_url: data.install_url as string,
+          redirect_url: data.redirect_url as string
+        };
+
+        return { success: true, appRecord: returnData, error: ""};
+    }
+    catch (err) {
+      console.error("Failed to get registered app:", err);
+      return { success: false, appRecord: null, error: err as string }
+    }
+}
+
+// Get a HubSpot installation by app ID and portal ID
 export async function getHubSpotInstall(appId: number, portalId: number):
   Promise< {success: boolean, installRecord: InstallDatabaseRecord | null, error: string} > {
   try {
@@ -204,7 +240,8 @@ export async function getHubSpotInstall(appId: number, portalId: number):
     }
 
     return { success: true, installRecord: returnData, error: "" };
-  } catch (err) {
+  }
+  catch (err) {
     console.error("Failed to get HubSpot installation:", err);
     return { success: false, installRecord: null, error: err as string }
   }
