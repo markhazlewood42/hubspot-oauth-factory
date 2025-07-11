@@ -30,4 +30,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: false, error }, { status: 400});
     }
   }
+  else {
+    return NextResponse.json({success: false, message: 'NO APP ID PROVIDED'}, {status: 400});
+  }
 }
