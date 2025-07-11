@@ -16,7 +16,7 @@ export async function GET(request: Request, { params }: GetTokenParams) {
 
   const appId = params.appId;
    if (!appId) {
-    return NextResponse.json({ success: false, error: "No app ID provided" }, { status: 400 })
+    return NextResponse.json({ success: false, error: "No appId provided" }, { status: 400 })
   }
 
   return NextResponse.json({success: true, message: `PLACEHOLDER: GETTING TOKEN FOR ${appId}`}, { status: 200 });
