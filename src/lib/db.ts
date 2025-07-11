@@ -191,6 +191,7 @@ export async function getRegisteredApp(appId: number):
           return { success: false, appRecord: null, error: "Installation not found" };
         }
 
+        // Explicitly construct the AppDatabaseRecord object from the returned data
         const returnData: AppDatabaseRecord = {
           id: data.id as number,
           app_id: data.app_id as number,
@@ -206,6 +207,40 @@ export async function getRegisteredApp(appId: number):
     catch (err) {
       console.error("Failed to get registered app:", err);
       return { success: false, appRecord: null, error: err as string }
+    }
+}
+
+// Get all currently registered apps.
+export async function getAllRegisteredApps():
+  Promise< {success: boolean, appRecords: AppDatabaseRecord[] | null, error: string} > {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from("hubspot_apps")
+        .select("*");
+
+      if (error) {
+        return { success: false, appRecords: null, error: error.message };
+      }
+
+      if (!data) {
+        return { success: false, appRecords: null, error: "No apps found" };
+      }
+
+      const appRecords: AppDatabaseRecord[] = data.map((item) => ({
+        id: item.id as number,
+        app_id: item.app_id as number,
+        client_id: item.client_id as string,
+        client_secret: item.client_secret as string,
+        configured_scopes: item.configured_scopes as string,
+        install_url: item.install_url as string,
+        redirect_url: item.redirect_url as string
+      }));
+
+      return { success: true, appRecords, error: "" };
+    }
+    catch (err) {
+      console.error("Failed to get all registered apps:", err);
+      return { success: false, appRecords: null, error: err as string };
     }
 }
 
