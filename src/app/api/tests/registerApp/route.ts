@@ -11,7 +11,7 @@ import * as db from '@/lib/db';
 export async function GET() {
 
   try {
-    const result = await db.storeHubSpotApp(1234, "TEST_CLIENT_ID", "TEST_CLIENT_SECRET");
+    const result = await db.storeHubSpotApp(1234, "TEST_CLIENT_ID", "TEST_CLIENT_SECRET", "crm.objects.contacts.read crm.objects.contacts.write");
     return NextResponse.json({success: true, message: `TESTING APP REGISTRATION. RESULT: ${result}`}, { status: 200 });
   }
   catch (error) {

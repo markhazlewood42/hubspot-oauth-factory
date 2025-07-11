@@ -54,7 +54,8 @@ export async function initDatabase() {
 export async function storeHubSpotApp(
   appId: number,
   clientId: string,
-  clientSecret: string
+  clientSecret: string,
+  scopes: string
 ) {
   try {
     // Check if an installation already exists for this portal
@@ -71,7 +72,8 @@ export async function storeHubSpotApp(
         .from("hubspot_apps")
         .update({
           client_id: clientId,
-          clien_secret: clientSecret
+          client_secret: clientSecret,
+          configured_scopes: scopes
         })
         .eq("app_id", appId)
         .select()
@@ -84,7 +86,8 @@ export async function storeHubSpotApp(
         .insert({
           app_id: appId,
           client_id: clientId,
-          client_secret: clientSecret
+          client_secret: clientSecret,
+          configured_scopes: scopes
         })
         .select()
         .single();
@@ -165,7 +168,8 @@ export async function storeHubSpotInstall(
 }
 
 // Get a HubSpot installation by portal ID
-export async function getHubSpotInstall(appId: string, portalId: string) {
+export async function getHubSpotInstall(appId: number, portalId: number):
+  Promise< {success: boolean, installRecord: InstallDatabaseRecord | null, error: string} > {
   try {
     const { data, error } = await supabaseAdmin
       .from("hubspot_installs")
@@ -175,17 +179,28 @@ export async function getHubSpotInstall(appId: string, portalId: string) {
       .single();
 
     if (error) {
-      return { success: false, error: error.message };
+      return { success: false, installRecord: null, error: error.message };
     }
 
     if (!data) {
-      return { success: false, error: "Installation not found" };
+      return { success: false, installRecord: null, error: "Installation not found" };
     }
 
-    return { success: true, installRecord: data };
-  } catch (error) {
-    console.error("Failed to get HubSpot installation:", error);
-    return { success: false, error };
+    const returnData: InstallDatabaseRecord = {
+      id: data.id as number,
+      app_id: data.app_id as number,
+      portal_id: data.portal_id as string,
+      access_token: data.access_token as string,
+      refresh_token: data.refresh_token as string,
+      expires_at: new Date(data.expires_at as string),
+      created_at: new Date(data.created_at as string),
+      updated_at: new Date(data.updated_at as string)
+    }
+
+    return { success: true, installRecord: returnData, error: "" };
+  } catch (err) {
+    console.error("Failed to get HubSpot installation:", err);
+    return { success: false, installRecord: null, error: err as string }
   }
 }
 

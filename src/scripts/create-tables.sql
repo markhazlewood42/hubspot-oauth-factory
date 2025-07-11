@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS hubspot_apps (
   app_id SMALLINT NOT NULL UNIQUE,
   client_id VARCHAR(100) NOT NULL UNIQUE,
   client_secret VARCHAR(100) NOT NULL UNIQUE,
+  configured_scopes TEXT NOT NULL,
   install_url TEXT,
   redirect_url TEXT
 );
