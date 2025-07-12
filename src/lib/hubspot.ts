@@ -76,7 +76,8 @@ export async function storeInstall(
 }
 
 // Check if an access token is expired and refresh it if needed
-export async function getValidAccessToken(appId: number, portalId: number) {
+export async function getValidAccessToken(appId: number, portalId: number):
+  Promise< {success: boolean; accessToken: string | null, error: string | null}> {
   try {
     const { success, installRecord, error } = await db.getHubSpotInstall(
       appId,
@@ -84,7 +85,7 @@ export async function getValidAccessToken(appId: number, portalId: number) {
     );
 
     if (!success || !installRecord) {
-      return { success: false, error };
+      return { success: false, accessToken: null, error};
     }
 
     // Check if the token is expired
@@ -94,14 +95,14 @@ export async function getValidAccessToken(appId: number, portalId: number) {
     if (expiresAt <= now) {
       // Token is expired, we need to refresh it
       const tokenData = await refreshToken(installRecord.refresh_token);
-      return { success: true, accessToken: tokenData.accessToken };
+      return { success: true, accessToken: tokenData.accessToken, error: null };
     }
 
-    return { success: true, accessToken: installRecord.access_token };
+    return { success: true, accessToken: installRecord.access_token, error: null };
   }
-  catch (error) {
-    console.error("Failed to get valid access token:", error);
-    return { success: false, error };
+  catch (err) {
+    console.error("Failed to get valid access token:", err);
+    return { success: false, accessToken: null, error: "Failed to get a valid access token." };
   }
 }
 

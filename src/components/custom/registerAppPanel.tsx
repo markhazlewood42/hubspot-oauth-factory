@@ -29,7 +29,7 @@ interface RegisterAppPanelProps {
   onClose: () => void;
 }
 
-const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange, onClose }) => {
+const RegisterAppPanel: React.FC<RegisterAppPanelProps> = (props: RegisterAppPanelProps) => {
 
   // Form state
   const [formData, setFormData] = useState<FormData>({
@@ -61,7 +61,7 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
   const handleClose = () => {
       setSubmitError(null);
       setSubmitSuccess(false);
-      onClose();
+      props.onClose();
   };
 
       // Handle opening the registration panel
@@ -124,7 +124,7 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={props.open} onOpenChange={props.onOpenChange}>
       <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
           <SheetHeader>
               <SheetTitle>Register New HubSpot App</SheetTitle>
@@ -133,7 +133,7 @@ const RegisterAppPanel: React.FC<RegisterAppPanelProps> = ({ open, onOpenChange,
               </SheetDescription>
           </SheetHeader>
 
-          <form className="mt-6 space-y-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <form className="space-y-6 p-6" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
               {/* App ID */}
               <div className="space-y-2">
                   <Label htmlFor="appId">App ID *</Label>

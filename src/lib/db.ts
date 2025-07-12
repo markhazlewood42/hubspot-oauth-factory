@@ -248,19 +248,19 @@ export async function getAllRegisteredApps():
 export async function getHubSpotInstall(appId: number, portalId: number):
   Promise< {success: boolean, installRecord: InstallDatabaseRecord | null, error: string} > {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data, error: sb_error } = await supabaseAdmin
       .from("hubspot_installs")
       .select("*")
       .eq("app_id", appId)
       .eq("portal_id", portalId)
       .single();
 
-    if (error) {
-      return { success: false, installRecord: null, error: error.message };
+    if (sb_error) {
+      return { success: false, installRecord: null, error: `An installation for app ${appId} on portal ${portalId} wasn't found. ${sb_error.message}` };
     }
 
     if (!data) {
-      return { success: false, installRecord: null, error: "Installation not found" };
+      return { success: false, installRecord: null, error: `An installation for app ${appId} on portal ${portalId} wasn't found.` };
     }
 
     const returnData: InstallDatabaseRecord = {
@@ -277,7 +277,7 @@ export async function getHubSpotInstall(appId: number, portalId: number):
     return { success: true, installRecord: returnData, error: "" };
   }
   catch (err) {
-    console.error("Failed to get HubSpot installation:", err);
+    console.error(`Failed to get HubSpot installation for app ${appId} on portal ${portalId}:`, err);
     return { success: false, installRecord: null, error: err as string }
   }
 }
